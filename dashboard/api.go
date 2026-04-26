@@ -75,10 +75,10 @@ func DeleteDevice(deviceName string) error {
 }
 
 func SetupClient(deviceName string) error {
-	cmd := exec.Command("bash", "./wireguard/scripts/client_setup.sh", deviceName)
+	cmd := exec.Command("bash", "./wireguard/scripts/client_create.sh", deviceName)
 	output, err := cmd.CombinedOutput()
 	if err != nil {
-		return fmt.Errorf("client_setup.sh failed: %w: %s", err, string(output))
+		return fmt.Errorf("client_create.sh failed: %w: %s", err, string(output))
 	}
 	return nil
 }

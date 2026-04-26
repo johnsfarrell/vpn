@@ -24,7 +24,7 @@ Add security rule:
 One time setup script:
 
 ```bash
-sudo bash ./wireguard/scripts/vm_setup.sh
+sudo bash ./wireguard/scripts/setup.sh
 ```
 
 Adds WireGuard private and public keys to `/etc/wireguard/server_private.key` and `/etc/wireguard/server_public.key`, respectively.
@@ -34,7 +34,7 @@ The VPS IP address is `10.8.0.1/24`.
 Creating clients:
 
 ```bash
-./wireguard/scripts/client_setup.sh <device_name>
+./wireguard/scripts/client_create.sh <device_name>
 ```
 
 ## Dashboard
@@ -42,7 +42,7 @@ Creating clients:
 One time setup script:
 
 ```bash
-./dashboard/setup.sh
+sudo bash ./dashboard/scripts/setup.sh
 ```
 
 Run dashboard:
