@@ -33,4 +33,6 @@ AllowedIPs = 0.0.0.0/0
 PersistentKeepalive = 25
 EOF
 
+cat "$CLIENT_DIR/client.conf"
+
 qrencode -t ansiutf8 < "$CLIENT_DIR/client.conf"
