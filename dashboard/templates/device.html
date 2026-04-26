@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VPN Device Details</title>
+</head>
+<body>
+  <h1>VPN Device Details</h1>
+  <h2>{{.Name}}</h2>
+  <p><strong>DNS:</strong> {{.DNS}}</p>
+  <p><strong>IP:</strong> {{.IP}}</p>
+  <p><strong>Endpoint:</strong> {{.Endpoint}}</p>
+  <p><strong>Last Handshake (Unix):</strong> {{.LastHandshakeUnix}}</p>
+  <p><strong>Transfer RX (Bytes):</strong> {{.TransferRxBytes}}</p>
+  <p><strong>Transfer TX (Bytes):</strong> {{.TransferTxBytes}}</p>
+  <p><strong>Public Key:</strong> {{.PublicKey}}</p>
+  <p><a href="{{.DownloadPath}}"><button type="button">Download client.conf</button></a></p>
+  <h3>QR Code</h3>
+  <img src="{{.QRCodeDataURL}}" alt="WireGuard QR code for {{.Name}}">
+  <p><a href="/delete-device/{{.Name}}"><button type="button">Delete device</button></a></p>
+</body>
+</html>

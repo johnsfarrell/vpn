@@ -3,12 +3,15 @@ set -euo pipefail
 
 DEVICE_NAME="${1:?Usage: $0 <device_name>}"
 CLIENT_DIR="./wireguard/clients/$DEVICE_NAME"
-PUBLIC_KEY="$(cat "$CLIENT_DIR/client_public.key")"
+PUBLIC_KEY="$(tr -d '\n' < "$CLIENT_DIR/client_public.key")"
 
-# delete peer's section from wg0 config
-sudo perl -0pi -e "s/\n?\[Peer\]\nPublicKey = \Q$PUBLIC_KEY\E\nAllowedIPs = [^\n]+\n//" /etc/wireguard/wg0.conf
+# remove this peer from saved config
+sudo env PUBLIC_KEY="$PUBLIC_KEY" perl -0pi -e '
+  my $key = quotemeta($ENV{"PUBLIC_KEY"});
+  s/\n?\[Peer\]\nPublicKey = $key\nAllowedIPs = [^\n]+\n//g;
+' /etc/wireguard/wg0.conf
 
-sudo systemctl restart wg-quick@wg0
+# fast replacement for: sudo systemctl restart wg-quick@wg0
+sudo wg set wg0 peer "$PUBLIC_KEY" remove
 
 rm -rf "$CLIENT_DIR"
-

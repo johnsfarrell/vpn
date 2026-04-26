@@ -48,7 +48,7 @@ One time setup script:
 Run dashboard:
 
 ```bash
-go run ./dashboard/main.go
+go run ./dashboard/*.go
 ```
 
 ## WireGuard for clients

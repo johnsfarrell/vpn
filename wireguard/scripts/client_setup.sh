@@ -18,7 +18,8 @@ PublicKey = '"$(cat "$CLIENT_DIR/client_public.key")"'
 AllowedIPs = '"$CLIENT_IP"'
 EOF'
 
-sudo systemctl restart wg-quick@wg0
+# fast replacement for: sudo systemctl restart wg-quick@wg0
+sudo wg set wg0 peer "$(cat "$CLIENT_DIR/client_public.key")" allowed-ips "$CLIENT_IP"
 
 cat > "$CLIENT_DIR/client.conf" <<EOF
 [Interface]

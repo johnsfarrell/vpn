@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VPN Dashboard</title>
+</head>
+<body>
+  <h1>VPN Dashboard</h1>
+  <h2>Devices</h2>
+  <ul>
+    {{range .}}
+    <li><a href="/device/{{.}}">{{.}}</a></li>
+    {{end}}
+  </ul>
+  <input type="text" id="deviceName" placeholder="Enter device name">
+  <button type="button" id="addDevice">Add device</button>
+  <script>
+    document.getElementById("addDevice").addEventListener("click", function() {
+      const deviceName = document.getElementById("deviceName").value.trim();
+      if (!deviceName) {
+        return;
+      }
+      window.location.href = "/add-device/" + encodeURIComponent(deviceName);
+    });
+  </script>
+</body>
+</html>
