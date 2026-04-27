@@ -24,6 +24,15 @@ LAST_HANDSHAKE_UNIX="$(echo "$PEER_LINE" | awk -F'\t' '{print $5}')"
 TRANSFER_RX_BYTES="$(echo "$PEER_LINE" | awk -F'\t' '{print $6}')"
 TRANSFER_TX_BYTES="$(echo "$PEER_LINE" | awk -F'\t' '{print $7}')"
 
+number_or_zero() {
+  local n="${1:-}"
+  if [[ "$n" =~ ^[0-9]+$ ]]; then
+    printf '%s' "$n"
+  else
+    printf '0'
+  fi
+}
+
 json_escape() {
   local s="$1"
   s="${s//\\/\\\\}"
@@ -42,8 +51,8 @@ printf '"publicKey":"%s",' "$(json_escape "$CLIENT_PUBLIC_KEY")"
 printf '"privateKey":"%s",' "$(json_escape "$CLIENT_PRIVATE_KEY")"
 printf '"dns":"%s",' "$(json_escape "${DNS:-unknown}")"
 printf '"endpoint":"%s",' "$(json_escape "${ENDPOINT:-unknown}")"
-printf '"lastHandshakeUnix":%s,' "$LAST_HANDSHAKE_UNIX"
-printf '"transferRxBytes":%s,' "$TRANSFER_RX_BYTES"
-printf '"transferTxBytes":%s,' "$TRANSFER_TX_BYTES"
+printf '"lastHandshakeUnix":%s,' "$(number_or_zero "$LAST_HANDSHAKE_UNIX")"
+printf '"transferRxBytes":%s,' "$(number_or_zero "$TRANSFER_RX_BYTES")"
+printf '"transferTxBytes":%s' "$(number_or_zero "$TRANSFER_TX_BYTES")"
 printf '}\n'
 exit 0
