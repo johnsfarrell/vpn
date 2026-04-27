@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VPN File Drop</title>
+</head>
+<body>
+  <h1>VPN File Drop</h1>
+  <h2>Files</h2>
+  <p>Free disk space: {{.FreeDiskSpaceBytes}} GB</p>
+  <ul>
+    {{range .Files}}
+    <li><a href="/download-file/{{.}}">{{.}}</a> <a href="/delete-file/{{.}}"><button type="button">Delete</button></a></li>
+    {{end}}
+  </ul>
+  <input type="file" id="fileInput" data-max-bytes="{{.FreeDiskSpaceBytes}}">
+  <button type="button" id="uploadFile">Upload file</button>
+  <script>
+    document.getElementById("uploadFile").addEventListener("click", function() {
+      const fileInput = document.getElementById("fileInput");
+      const maxBytes = Number(fileInput.dataset.maxBytes || 0);
+      const file = fileInput.files[0];
+      const formData = new FormData();
+      formData.append("file", file);
+      fetch("/upload-file", {
+        method: "POST",
+        body: formData,
+      }).catch((error) => {
+        alert("Upload failed: " + error.message);
+      });
+    });
+  </script>
+</body>
+</html>

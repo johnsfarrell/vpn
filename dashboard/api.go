@@ -5,10 +5,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"html/template"
+	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"sort"
+	"strconv"
+	"strings"
 )
 
 type DeviceDetails struct {
@@ -60,7 +63,7 @@ func GetDeviceDetails(deviceName string) (*DeviceDetails, error) {
 	}
 
 	response.QRCodeDataURL = qrCodeDataURL
-	response.DownloadPath = "/download-config/" + deviceName
+	response.DownloadPath = "/download-device-config/" + deviceName
 	
 	return &response, nil
 }
@@ -102,4 +105,59 @@ func ReadClientConfig(deviceName string) ([]byte, error) {
 		return nil, fmt.Errorf("failed to read client config: %w", err)
 	}
 	return content, nil
+}
+
+func VMFreeDiskSpaceGB() (int64, error) {
+	cmd := exec.Command("df", "--output=avail", "-B1", "/")
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		return 0, fmt.Errorf("df failed: %w: %s", err, string(output))
+	}
+	fields := strings.Fields(string(output))
+	if len(fields) < 2 {
+		return 0, fmt.Errorf("unexpected df output: %q", string(output))
+	}
+	freeBytes, err := strconv.ParseInt(fields[len(fields)-1], 10, 64)
+	if err != nil {
+		return 0, fmt.Errorf("failed to parse free bytes: %w", err)
+	}
+	return freeBytes / 1000 / 1000 / 1000, nil
+}
+
+func ListFiles() ([]string, error) {
+	entries, err := os.ReadDir("files")
+	if err != nil {
+		return nil, fmt.Errorf("unable to read files directory: %w", err)
+	}
+	
+	names := make([]string, 0, len(entries))
+	for _, entry := range entries {
+		if entry.Name() != ".gitkeep" {
+			names = append(names, entry.Name())
+		}
+	}
+	sort.Strings(names)
+	return names, nil
+}
+
+func UploadFile(file io.Reader, filename string) error {
+	filePath := filepath.Join("files", filepath.Base(filename))
+	content, err := io.ReadAll(file)
+	if err != nil {
+		return fmt.Errorf("failed to write file: %w", err)
+	}
+	err = os.WriteFile(filePath, content, 0644)
+	if err != nil {
+		return fmt.Errorf("failed to write file: %w", err)
+	}
+	return nil
+}
+
+func DeleteFile(filename string) error {
+	filePath := filepath.Join("files", filename)
+	err := os.Remove(filePath)
+	if err != nil {
+		return fmt.Errorf("failed to delete file: %w", err)
+	}
+	return nil
 }

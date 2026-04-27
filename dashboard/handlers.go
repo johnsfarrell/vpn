@@ -4,15 +4,28 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"os"
+	"path/filepath"
 	"strings"
 )
 
+type FilesPageData struct {
+	Files              []string
+	FreeDiskSpaceBytes int64
+}
+
 func RegisterRoutes() {
 	http.HandleFunc("/", handleIndex)
-	http.HandleFunc("/download-config/", handleDownloadConfig)
+
+	http.HandleFunc("/device/", handleDeviceDetails)
+	http.HandleFunc("/download-device-config/", handleDownloadDeviceConfig)
 	http.HandleFunc("/add-device/", handleAddDevice)
 	http.HandleFunc("/delete-device/", handleDeleteDevice)
-	http.HandleFunc("/device/", handleDeviceDetails)
+	
+	http.HandleFunc("/files", handleFiles)
+	http.HandleFunc("/upload-file", handleUploadFile)
+	http.HandleFunc("/download-file/", handleDownloadFile)
+	http.HandleFunc("/delete-file/", handleDeleteFile)
 }
 
 func handleIndex(w http.ResponseWriter, _ *http.Request) {
@@ -30,7 +43,7 @@ func handleIndex(w http.ResponseWriter, _ *http.Request) {
 }
 
 func handleDownloadConfig(w http.ResponseWriter, r *http.Request) {
-	deviceName, err := pathDeviceName(r.URL.Path, "/download-config/")
+	deviceName, err := pathDeviceName(r.URL.Path, "/download-device-config/")
 	if err != nil {
 		http.Error(w, "invalid device name", http.StatusBadRequest)
 		return
@@ -105,4 +118,81 @@ func pathDeviceName(path, prefix string) (string, error) {
 	raw := strings.TrimPrefix(path, prefix)
 	raw = strings.TrimSuffix(raw, "/")
 	return url.PathUnescape(raw)
+}
+
+func handleFiles(w http.ResponseWriter, r *http.Request) {
+	freeDiskSpaceBytes, err := VMFreeDiskSpaceGB()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	files, err := ListFiles()
+	if err != nil {
+		http.Error(w, "failed to list files", http.StatusInternalServerError)
+		return
+	}
+	
+	data := FilesPageData{
+		Files:              files,
+		FreeDiskSpaceBytes: freeDiskSpaceBytes,
+	}
+
+	err = FilesTemplate.Execute(w, data)
+	if err != nil {
+		http.Error(w, "failed to render files page", http.StatusInternalServerError)
+		return
+	}
+}
+
+func handleUploadFile(w http.ResponseWriter, r *http.Request) {
+	file, header, err := r.FormFile("file")
+	if err != nil {
+		http.Error(w, "failed to get file", http.StatusInternalServerError)
+		return
+	}
+	defer file.Close()
+
+	err = UploadFile(file, header.Filename)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	http.Redirect(w, r, "/files", http.StatusSeeOther)
+}
+
+func handleDownloadFile(w http.ResponseWriter, r *http.Request) {
+	filename, err := pathDeviceName(r.URL.Path, "/download-file/")
+	if err != nil {
+		http.Error(w, "invalid filename", http.StatusBadRequest)
+		return
+	}
+
+	filePath := filepath.Join("files", filename)
+	content, err := os.ReadFile(filePath)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/octet-stream")
+	w.Header().Set("Content-Disposition", "attachment; filename=\""+filename+"\"")
+	_, _ = w.Write(content)
+}
+
+func handleDeleteFile(w http.ResponseWriter, r *http.Request) {
+	filename, err := pathDeviceName(r.URL.Path, "/delete-file/")
+	if err != nil {
+		http.Error(w, "invalid filename", http.StatusBadRequest)
+		return
+	}
+
+	err = DeleteFile(filename)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	
+	http.Redirect(w, r, "/files", http.StatusSeeOther)
 }

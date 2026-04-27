@@ -1,2 +1,5 @@
 wireguard/clients/*
 !wireguard/clients/.gitkeep
+
+files/*
+!files/.gitkeep
