@@ -12,6 +12,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type DeviceDetails struct {
@@ -22,8 +23,11 @@ type DeviceDetails struct {
 	IP            string `json:"ip"`
 	Endpoint      string `json:"endpoint"`
 	LastHandshakeUnix int64 `json:"lastHandshakeUnix"`
+	LastHandshakeAgo  string `json:"-"`
 	TransferRxBytes   int64 `json:"transferRxBytes"`
 	TransferTxBytes   int64 `json:"transferTxBytes"`
+	DownloadMB    float64 `json:"-"`
+	UploadMB      float64 `json:"-"`
 	QRCodeDataURL template.URL
 	DownloadPath  string
 }
@@ -64,6 +68,14 @@ func GetDeviceDetails(deviceName string) (*DeviceDetails, error) {
 
 	response.QRCodeDataURL = qrCodeDataURL
 	response.DownloadPath = "/download-device-config/" + deviceName
+	response.DownloadMB = float64(response.TransferRxBytes) / 1000 / 1000
+	response.UploadMB = float64(response.TransferTxBytes) / 1000 / 1000
+	response.LastHandshakeAgo = "Never"
+	if response.LastHandshakeUnix > 0 {
+		handshakeTime := time.Unix(response.LastHandshakeUnix, 0)
+		duration := time.Since(handshakeTime).Round(time.Second)
+		response.LastHandshakeAgo = duration.String() + " ago"
+	}
 	
 	return &response, nil
 }

@@ -12,9 +12,9 @@
   <p><strong>DNS:</strong> {{.DNS}}</p>
   <p><strong>IP:</strong> {{.IP}}</p>
   <p><strong>Endpoint:</strong> {{.Endpoint}}</p>
-  <p><strong>Last Handshake (Unix):</strong> {{.LastHandshakeUnix}}</p>
-  <p><strong>Transfer RX (Bytes):</strong> {{.TransferRxBytes}}</p>
-  <p><strong>Transfer TX (Bytes):</strong> {{.TransferTxBytes}}</p>
+  <p><strong>Last Handshake:</strong> {{.LastHandshakeAgo}}</p>
+  <p><strong>Download (MB):</strong> {{printf "%.2f" .DownloadMB}}</p>
+  <p><strong>Upload (MB):</strong> {{printf "%.2f" .UploadMB}}</p>
   <p><strong>Public Key:</strong> {{.PublicKey}}</p>
   <p><a href="{{.DownloadPath}}"><button type="button">Download client.conf</button></a></p>
   <h3>QR Code</h3>
