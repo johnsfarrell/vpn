@@ -18,6 +18,8 @@
   <button type="button" id="addDevice">Add device</button>
   <script>
     document.getElementById("addDevice").addEventListener("click", function() {
+      this.disabled = true;
+
       const deviceName = document.getElementById("deviceName").value.trim();
       if (!deviceName) {
         return;

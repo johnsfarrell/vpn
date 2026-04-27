@@ -19,6 +19,11 @@
   <p><a href="{{.DownloadPath}}"><button type="button">Download client.conf</button></a></p>
   <h3>QR Code</h3>
   <img src="{{.QRCodeDataURL}}" alt="WireGuard QR code for {{.Name}}">
-  <p><a href="/delete-device/{{.Name}}"><button type="button">Delete device</button></a></p>
+  <p><a href="/delete-device/{{.Name}}"><button type="button" id="deleteDevice">Delete device</button></a></p>
+  <script>
+    document.getElementById("deleteDevice").addEventListener("click", function() {
+      this.disabled = true;
+    });
+  </script>
 </body>
 </html>
