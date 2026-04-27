@@ -14,4 +14,6 @@ sudo env PUBLIC_KEY="$PUBLIC_KEY" perl -0pi -e '
 # fast replacement for: sudo systemctl restart wg-quick@wg0
 sudo wg set wg0 peer "$PUBLIC_KEY" remove
 
+./dns/remove_device.sh "$DEVICE_NAME"
+
 rm -rf "$CLIENT_DIR"

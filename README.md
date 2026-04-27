@@ -55,3 +55,14 @@ go run ./dashboard/*.go
 
 Install [WireGuard app](https://www.wireguard.com/install/) on your device.
 
+## DNS
+
+One time setup script:
+
+```bash
+# export VPN_DOMAIN=custom.domain.internal
+sudo bash ./dns/setup.sh
+```
+
+If `VPN_DOMAIN` is not set, scripts default to `vpn.local`.
+
