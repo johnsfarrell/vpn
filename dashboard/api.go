@@ -193,22 +193,12 @@ func UnblockDomain(domainName string) error {
 }
 
 func ListBlockedDomains() ([]string, error) {
-	content, err := os.ReadFile("/etc/dnsmasq.d/block.conf")
+	cmd := exec.Command("bash", "./dns/scripts/list_blocked_domains.sh")
+	output, err := cmd.CombinedOutput()
 	if err != nil {
-		return nil, fmt.Errorf("failed to read block config: %w", err)
+		return nil, fmt.Errorf("list_blocked_domains.sh failed: %w: %s", err, string(output))
 	}
-
-	lines := strings.Split(string(content), "\n")
-	domains := make([]string, 0, len(lines))
-	for _, line := range lines {
-		line = strings.TrimSpace(line)
-		domain := strings.TrimPrefix(line, "address=/")
-		domain = strings.TrimSuffix(domain, "/0.0.0.0")
-		if domain != "" {
-			domains = append(domains, domain)
-		}
-	}
-
+	domains := strings.Fields(string(output))
 	sort.Strings(domains)
 	return domains, nil
 }
