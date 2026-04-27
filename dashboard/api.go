@@ -173,3 +173,42 @@ func DeleteFile(filename string) error {
 	}
 	return nil
 }
+
+func BlockDomain(domainName string) error {
+	cmd := exec.Command("bash", "./dns/scripts/block_domain.sh", domainName)
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("block_domain.sh failed: %w: %s", err, string(output))
+	}
+	return nil
+}
+
+func UnblockDomain(domainName string) error {
+	cmd := exec.Command("bash", "./dns/scripts/unblock_domain.sh", domainName)
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("unblock_domain.sh failed: %w: %s", err, string(output))
+	}
+	return nil
+}
+
+func ListBlockedDomains() ([]string, error) {
+	content, err := os.ReadFile("/etc/dnsmasq.d/block.conf")
+	if err != nil {
+		return nil, fmt.Errorf("failed to read block config: %w", err)
+	}
+
+	lines := strings.Split(string(content), "\n")
+	domains := make([]string, 0, len(lines))
+	for _, line := range lines {
+		line = strings.TrimSpace(line)
+		domain := strings.TrimPrefix(line, "address=/")
+		domain = strings.TrimSuffix(domain, "/0.0.0.0")
+		if domain != "" {
+			domains = append(domains, domain)
+		}
+	}
+
+	sort.Strings(domains)
+	return domains, nil
+}

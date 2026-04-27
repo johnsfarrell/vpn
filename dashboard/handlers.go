@@ -26,6 +26,10 @@ func RegisterRoutes() {
 	http.HandleFunc("/upload-file", handleUploadFile)
 	http.HandleFunc("/download-file/", handleDownloadFile)
 	http.HandleFunc("/delete-file/", handleDeleteFile)
+
+	http.HandleFunc("/blocked-domains", handleBlockedDomains)
+	http.HandleFunc("/block-domain/", handleBlockDomain)
+	http.HandleFunc("/unblock-domain/", handleUnblockDomain)
 }
 
 func handleIndex(w http.ResponseWriter, _ *http.Request) {
@@ -199,4 +203,52 @@ func handleDeleteFile(w http.ResponseWriter, r *http.Request) {
 
 	log.Printf("File deleted: %s", filename)
 	http.Redirect(w, r, "/files", http.StatusSeeOther)
+}
+
+func handleBlockedDomains(w http.ResponseWriter, r *http.Request) {
+	domains, err := ListBlockedDomains()
+	if err != nil {
+		http.Error(w, "failed to list blocked domains", http.StatusInternalServerError)
+		return
+	}
+	
+	err = BlockedDomainsTemplate.Execute(w, domains)
+	if err != nil {
+		http.Error(w, "failed to render blocked domains page", http.StatusInternalServerError)
+		return
+	}
+}
+
+func handleBlockDomain(w http.ResponseWriter, r *http.Request) {
+	domainName, err := pathDeviceName(r.URL.Path, "/block-domain/")
+	if err != nil {
+		http.Error(w, "invalid domain name", http.StatusBadRequest)
+		return
+	}
+
+	err = BlockDomain(domainName)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	log.Printf("Domain blocked: %s", domainName)
+	http.Redirect(w, r, "/blocked-domains", http.StatusSeeOther)
+}
+
+func handleUnblockDomain(w http.ResponseWriter, r *http.Request) {
+	domainName, err := pathDeviceName(r.URL.Path, "/unblock-domain/")
+	if err != nil {
+		http.Error(w, "invalid domain name", http.StatusBadRequest)
+		return
+	}
+
+	err = UnblockDomain(domainName)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	log.Printf("Domain unblocked: %s", domainName)
+	http.Redirect(w, r, "/blocked-domains", http.StatusSeeOther)
 }

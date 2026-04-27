@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VPN Blocked Domains</title>
+</head>
+<body>
+  <h1>VPN Blocked Domains</h1>
+  <p><a href="/">Back to devices</a></p>
+  <h2>Blocked Domains</h2>
+  <ul>
+    {{range .}}
+    <li>{{.}}<a href="/unblock-domain/{{.}}"><button type="button">Unblock</button></a></li>
+    {{end}}
+  </ul>
+  <input type="text" id="domainName" placeholder="facebook.com">
+  <button type="button" id="blockDomain">Block domain</button>
+  <script>
+    document.getElementById("blockDomain").addEventListener("click", function() {
+      this.disabled = true;
+      const domainName = document.getElementById("domainName").value.trim();
+      if (!domainName) {
+        return;
+      }
+      window.location.href = "/block-domain/" + encodeURIComponent(domainName);
+    });
+  </script>
+</body>
+</html>
