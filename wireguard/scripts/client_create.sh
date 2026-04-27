@@ -25,7 +25,7 @@ cat > "$CLIENT_DIR/client.conf" <<EOF
 [Interface]
 PrivateKey = $(cat "$CLIENT_DIR/client_private.key")
 Address = $CLIENT_IP
-DNS = 1.1.1.1
+DNS = 10.8.0.1
 
 [Peer]
 PublicKey = $(sudo cat /etc/wireguard/server_public.key)
