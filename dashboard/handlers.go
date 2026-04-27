@@ -159,6 +159,7 @@ func handleUploadFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	log.Printf("File uploaded: %s", header.Filename)
 	http.Redirect(w, r, "/files", http.StatusSeeOther)
 }
 
@@ -179,6 +180,8 @@ func handleDownloadFile(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/octet-stream")
 	w.Header().Set("Content-Disposition", "attachment; filename=\""+filename+"\"")
 	_, _ = w.Write(content)
+
+	log.Printf("File downloaded: %s", filename)
 }
 
 func handleDeleteFile(w http.ResponseWriter, r *http.Request) {
@@ -194,5 +197,6 @@ func handleDeleteFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	log.Printf("File deleted: %s", filename)
 	http.Redirect(w, r, "/files", http.StatusSeeOther)
 }
