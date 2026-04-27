@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-VPN_DOMAIN="${VPN_DOMAIN:-vpn.local}"
+VPN_DOMAIN="${VPN_DOMAIN:-vpn.io}"
 
 sudo apt install -y dnsmasq dnsutils
 
@@ -24,3 +24,9 @@ EOF
 
 sudo systemctl restart dnsmasq
 sudo systemctl enable dnsmasq
+
+sudo iptables -I INPUT 1 -i wg0 -p udp --dport 53 -j ACCEPT
+sudo iptables -I INPUT 1 -i wg0 -p tcp --dport 53 -j ACCEPT
+
+sudo apt install iptables-persistent -y
+sudo netfilter-persistent save

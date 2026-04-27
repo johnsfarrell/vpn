@@ -60,9 +60,8 @@ Install [WireGuard app](https://www.wireguard.com/install/) on your device.
 One time setup script:
 
 ```bash
-# export VPN_DOMAIN=custom.domain.internal
 sudo bash ./dns/setup.sh
 ```
 
-If `VPN_DOMAIN` is not set, scripts default to `vpn.local`.
+Default domain is `vpn.io`. Use `export VPN_DOMAIN=...` to set a custom domain BEFORE running the setup script.
 
