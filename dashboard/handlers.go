@@ -42,7 +42,7 @@ func handleIndex(w http.ResponseWriter, _ *http.Request) {
 	}
 }
 
-func handleDownloadConfig(w http.ResponseWriter, r *http.Request) {
+func handleDownloadDeviceConfig(w http.ResponseWriter, r *http.Request) {
 	deviceName, err := pathDeviceName(r.URL.Path, "/download-device-config/")
 	if err != nil {
 		http.Error(w, "invalid device name", http.StatusBadRequest)
@@ -193,6 +193,6 @@ func handleDeleteFile(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	
+
 	http.Redirect(w, r, "/files", http.StatusSeeOther)
 }
