@@ -3,6 +3,8 @@ set -euo pipefail
 
 NAME="${1:?Usage: $0 <device_name> <device_address>}"
 ADDR="${2:?Usage: $0 <device_name> <device_address>}"
+ADDR="${ADDR%/32}"
+
 source ./dns/config.env
 
 sudo tee -a /etc/dnsmasq.hosts > /dev/null <<EOF
