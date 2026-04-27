@@ -3,7 +3,7 @@ set -euo pipefail
 
 NAME="${1:?Usage: $0 <device_name> <device_address>}"
 ADDR="${2:?Usage: $0 <device_name> <device_address>}"
-VPN_DOMAIN="${VPN_DOMAIN:-vpn.io}"
+source ./dns/config.env
 
 sudo tee -a /etc/dnsmasq.hosts > /dev/null <<EOF
 $ADDR $NAME.$VPN_DOMAIN $NAME

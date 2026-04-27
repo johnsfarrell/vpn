@@ -2,7 +2,7 @@
 set -euo pipefail
 
 NAME="${1:?Usage: $0 <device_name>}"
-VPN_DOMAIN="${VPN_DOMAIN:-vpn.io}"
+source ./dns/config.env
 
 sudo sed -i "/^.*[[:space:]]$NAME\.$VPN_DOMAIN[[:space:]]$NAME$/d" /etc/dnsmasq.hosts
 

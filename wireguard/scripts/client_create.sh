@@ -34,7 +34,7 @@ AllowedIPs = 0.0.0.0/0
 PersistentKeepalive = 25
 EOF
 
-sudo bash ./dns/add_device.sh "$DEVICE_NAME" "$CLIENT_IP"
+sudo bash ./dns/scripts/client_create.sh "$DEVICE_NAME" "$CLIENT_IP"
 
 cat "$CLIENT_DIR/client.conf"
 

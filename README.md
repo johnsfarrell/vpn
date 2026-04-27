@@ -60,8 +60,8 @@ Install [WireGuard app](https://www.wireguard.com/install/) on your device.
 One time setup script:
 
 ```bash
-sudo bash ./dns/setup.sh
+sudo bash ./dns/scripts/setup.sh
 ```
 
-Default domain is `vpn.io`. Use `export VPN_DOMAIN=...` to set a custom domain BEFORE running the setup script.
+Default domain is `vpn.io`. Update `dns/config.env` to set a custom domain before running the setup script.
 

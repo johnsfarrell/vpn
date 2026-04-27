@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-VPN_DOMAIN="${VPN_DOMAIN:-vpn.io}"
+source ./dns/config.env
 
 sudo apt install -y dnsmasq dnsutils
 
