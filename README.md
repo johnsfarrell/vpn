@@ -63,5 +63,5 @@ One time setup script:
 sudo bash ./dns/scripts/setup.sh
 ```
 
-Default domain is `vpn.io`. Update `dns/config.env` to set a custom domain before running the setup script.
+Default domain is `vn`. Update `dns/config.env` to set a custom domain before running the setup script. For example, the dashboard is served at `dashboard.vn`.
 

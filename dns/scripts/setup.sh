@@ -19,7 +19,7 @@ server=8.8.8.8
 EOF
 
 sudo tee /etc/dnsmasq.hosts > /dev/null <<EOF
-10.8.0.1 $VPN_DOMAIN
+10.8.0.1 dashboard.$VPN_DOMAIN dashboard
 EOF
 
 sudo systemctl restart dnsmasq
